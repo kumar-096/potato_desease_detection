@@ -1,14 +1,17 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Depends
+
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 from io import BytesIO
 import numpy as np
 import requests
-from auth import router as auth_router
+
+from auth_routes import router as auth_router
+from auth_routes import get_current_user, require_role
 
 
 app = FastAPI()
-from auth_routes import router as auth_router
+
 app.include_router(auth_router)
 
 app.add_middleware(
@@ -34,7 +37,10 @@ def preprocess_image(data):
 
 
 @app.post("/predict")
-async def predict(file: UploadFile = File(...)):
+async def predict(
+    file: UploadFile = File(...),
+    user=Depends(require_role("farmer"))
+):
     image = preprocess_image(await file.read())
     payload = {"instances": [image]}
 
@@ -62,4 +68,5 @@ async def predict(file: UploadFile = File(...)):
     return {
         "prediction": CLASS_NAMES[index],
         "confidence": float(np.max(predictions)),
+        "user_id": user.id
     }

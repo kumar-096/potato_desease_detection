@@ -2,16 +2,15 @@ import React from "react";
 import "./ResultCard.css";
 
 function ResultCard({ result }) {
-  // ✅ Guard clause (MOST IMPORTANT)
-  if (!result || !result.prediction) {
-    return null; // or a placeholder UI
-  }
+  if (!result || !result.prediction) return null;
 
-  const prediction = result.prediction.toLowerCase();
-  const confidence = (result.confidence * 100).toFixed(2);
+  const confidence =
+    typeof result.confidence === "number"
+      ? (result.confidence * 100).toFixed(2)
+      : "—";
 
   return (
-    <div className={`result-card ${prediction}`}>
+    <div className={`result-card ${result.prediction.toLowerCase()}`}>
       <h2>Prediction Result</h2>
       <p>
         <strong>Disease:</strong> {result.prediction}

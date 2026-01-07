@@ -11,8 +11,11 @@ export default function ImageCapture({
 }) {
   return (
     <div className="card">
+      {/* ===============================
+         BUTTON STACK (VERTICAL)
+      =============================== */}
       {!cameraOpen && (
-        <>
+        <div className="button-stack">
           <button className="upload-btn" onClick={openCamera}>
             📸 Capture Image
           </button>
@@ -26,31 +29,46 @@ export default function ImageCapture({
               hidden
             />
           </label>
-        </>
-      )}
-
-      {cameraOpen && (
-        <div className="camera-box">
-          <video ref={videoRef} autoPlay playsInline />
-          <button className="capture-btn" onClick={capturePhoto}>
-            📷 Capture Photo
-          </button>
         </div>
       )}
 
+      {/* ===============================
+         CAMERA VIEW
+      =============================== */}
+      {cameraOpen && (
+  <div className="camera-box">
+    <video ref={videoRef} autoPlay playsInline />
+
+    <div className="button-stack">
+      <button className="capture-btn" onClick={capturePhoto}>
+        📷 Capture Photo
+      </button>
+    </div>
+  </div>
+)}
+
+
+      {/* ===============================
+         IMAGE PREVIEW
+      =============================== */}
       {preview && (
         <div className="preview">
-          <img src={preview} alt="Leaf Preview" />
+          <img src={preview} alt="Captured leaf preview" />
         </div>
       )}
 
-      <button
-        className="predict-btn"
-        onClick={handlePredict}
-        disabled={loading || !image}
-      >
-        {loading ? "Analyzing..." : "Predict Disease"}
-      </button>
+      {/* ===============================
+         PREDICT BUTTON
+      =============================== */}
+      <div className="button-stack">
+        <button
+          className="predict-btn"
+          onClick={handlePredict}
+          disabled={loading || !image}
+        >
+          {loading ? "🔍 Analyzing..." : "🌱 Predict Disease"}
+        </button>
+      </div>
     </div>
   );
 }

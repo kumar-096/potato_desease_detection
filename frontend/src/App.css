@@ -7,168 +7,214 @@
 
 body {
   margin: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(180deg, #e8f5e9, #ffffff);
+  font-family: "Inter", system-ui, sans-serif;
+  background: linear-gradient(135deg, #e6f4ea, #f8fbf8);
+  color: #1f2937;
 }
 
 /* ===============================
-   MAIN CONTAINER
+   APP LAYOUT (DESKTOP + MOBILE)
 ================================ */
-.app {
-  max-width: 420px;
-  margin: auto;
-  padding: 16px;
+.app-layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ===============================
-   HEADER
-================================ */
+/* HEADER */
 .header {
-  text-align: center;
-  margin-bottom: 20px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  z-index: 10;
 }
 
 .header h1 {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
+  font-weight: 700;
   color: #1b5e20;
 }
 
-.header p {
-  margin-top: 6px;
-  font-size: 0.9rem;
-  color: #4f4f4f;
-}
-
-/* ===============================
-   CARD
-================================ */
-.card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 18px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-}
-
-/* ===============================
-   PRIMARY BUTTONS
-================================ */
-.upload-btn {
-  width: 100%;
-  padding: 14px;
-  margin-bottom: 10px;
-
+.header-actions {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
+  gap: 12px;
+}
 
-  background: linear-gradient(135deg, #1b5e20, #43a047);
-  color: #ffffff;
+.header-actions button {
+  background: #e8f5e9;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+}
 
+/* BODY */
+.body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ===============================
+   SIDEBAR
+================================ */
+.sidebar {
+  width: 240px;
+  background: linear-gradient(180deg, #121916, #0c0f0d);
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.25);
+}
+
+.sidebar button {
+  background: none;
+  border: none;
+  color: #d1d5db;
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.sidebar button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.sidebar .active {
+  background: linear-gradient(90deg, #2e7d32, #66bb6a);
+  color: white;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* ===============================
+   MAIN CONTENT AREA
+================================ */
+.content {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+/* ===============================
+   CARD (UNIFIED)
+================================ */
+.card {
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+/* ===============================
+   BUTTONS (YOUR ORIGINAL – POLISHED)
+================================ */
+.upload-btn,
+.capture-btn,
+.predict-btn {
+  width: 100%;
+  padding: 14px;
   border-radius: 16px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-
-  box-shadow: 0 8px 18px rgba(46, 125, 50, 0.35);
+  border: none;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.upload-btn:active {
-  transform: scale(0.96);
+.upload-btn {
+  background: linear-gradient(135deg, #1b5e20, #43a047);
+  color: white;
+  box-shadow: 0 8px 18px rgba(46, 125, 50, 0.35);
 }
 
-/* Hover only for laptops */
-@media (hover: hover) {
-  .upload-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(46, 125, 50, 0.45);
-  }
-}
-
-/* Secondary button */
 .upload-btn.secondary {
   background: linear-gradient(135deg, #546e7a, #90a4ae);
-  box-shadow: 0 8px 18px rgba(84, 110, 122, 0.35);
+}
+
+.capture-btn {
+  background: linear-gradient(135deg, #c62828, #ef5350);
+  color: white;
+}
+
+.predict-btn {
+  background: linear-gradient(135deg, #1565c0, #42a5f5);
+  color: white;
+}
+
+.upload-btn:active,
+.capture-btn:active,
+.predict-btn:active {
+  transform: scale(0.96);
 }
 
 /* ===============================
    CAMERA
 ================================ */
-.camera-box {
-  margin-top: 12px;
-  text-align: center;
-}
-
 .camera-box video {
   width: 100%;
-  border-radius: 14px;
-}
-
-.capture-btn {
-  width: 100%;
-  margin-top: 10px;
-  padding: 14px;
-
-  background: linear-gradient(135deg, #c62828, #ef5350);
-  color: white;
-
   border-radius: 16px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-
-  box-shadow: 0 8px 18px rgba(198, 40, 40, 0.35);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.capture-btn:active {
-  transform: scale(0.96);
 }
 
 /* ===============================
-   IMAGE PREVIEW
+   PREVIEW
+================================ */
+/* ===============================
+   IMAGE PREVIEW (RESPONSIVE)
 ================================ */
 .preview {
-  margin: 16px 0;
-  border-radius: 14px;
+  margin: 20px auto;
+  max-width: 640px;
+  border-radius: 20px;
   overflow: hidden;
+  background: #000;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.25);
 }
 
 .preview img {
   width: 100%;
+  height: auto;
+  max-height: 420px;
+  object-fit: contain; /* 👈 KEY LINE */
   display: block;
+  background: #000;
 }
-
-/* ===============================
-   PREDICT BUTTON
-================================ */
-.predict-btn {
+@media (max-width: 480px) {
+  .preview img {
+    max-height: 320px;
+  }
+}
+@media (min-width: 900px) {
+  .preview img {
+    max-height: 460px;
+  }
+}
+.camera-box video {
   width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, #1565c0, #42a5f5);
-  border: none;
-  border-radius: 14px;
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
+  max-width: 640px;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
 }
 
-.predict-btn:disabled {
-  background: #bdbdbd;
-  cursor: not-allowed;
-}
 
 /* ===============================
-   RESULT
+   RESULT STATES
 ================================ */
-.result {
-  text-align: center;
-}
-
 .healthy {
   border-left: 6px solid #2e7d32;
 }
@@ -178,191 +224,189 @@ body {
 }
 
 /* ===============================
-   CONFIDENCE BAR
-================================ */
-.confidence-box {
-  margin-top: 14px;
-}
-
-.confidence-text {
-  font-size: 0.95rem;
-  margin-bottom: 6px;
-}
-
-.confidence-bar {
-  width: 100%;
-  height: 10px;
-  background: #e0e0e0;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.confidence-fill {
-  height: 100%;
-  transition: width 0.6s ease;
-}
-
-.confidence-fill.high {
-  background: linear-gradient(90deg, #2e7d32, #66bb6a);
-}
-
-.confidence-fill.medium {
-  background: linear-gradient(90deg, #f9a825, #fdd835);
-}
-
-.confidence-fill.low {
-  background: linear-gradient(90deg, #c62828, #ef5350);
-}
-
-/* ===============================
-   SUGGESTIONS
-================================ */
-.suggestions {
-  margin-top: 18px;
-  text-align: left;
-}
-
-.suggestions h3 {
-  font-size: 1rem;
-  margin-bottom: 10px;
-  color: #2e7d32;
-}
-
-.suggestions ul {
-  padding-left: 18px;
-}
-
-.suggestions li {
-  margin-bottom: 6px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-/* ===============================
-   HISTORY
-================================ */
-.history ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.history li {
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  flex-direction: column;
-}
-
-.history-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.history-header button {
-  background: none;
-  border: none;
-  color: #c62828;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* ===============================
-   RESPONSIVE
-================================ */
-@media (min-width: 480px) {
-  .app {
-    max-width: 560px;
-    padding: 20px;
-  }
-
-  .header h1 {
-    font-size: 1.7rem;
-  }
-
-  .card {
-    padding: 18px;
-  }
-}
-
-@media (min-width: 900px) {
-  body {
-    background: linear-gradient(120deg, #eef5ee, #f8fbf8);
-  }
-
-  .app {
-    max-width: 640px;
-    padding: 24px;
-  }
-
-  .header h1 {
-    font-size: 1.9rem;
-  }
-
-  .header p {
-    font-size: 0.95rem;
-  }
-
-  .card {
-    padding: 20px;
-    border-radius: 18px;
-  }
-}
-/* ===============================
-   HEADER TOP
-================================ */
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.theme-toggle {
-  background: none;
-  border: none;
-  font-size: 1.3rem;
-  cursor: pointer;
-}
-
-/* ===============================
    DARK MODE
 ================================ */
 body.dark {
-  background: linear-gradient(180deg, #121212, #1e1e1e);
-  color: #e0e0e0;
+  background: linear-gradient(135deg, #0f172a, #020617);
+  color: #e5e7eb;
+}
+
+body.dark .header {
+  background: rgba(15, 23, 42, 0.85);
 }
 
 body.dark .card {
-  background: #1f1f1f;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  background: rgba(15, 23, 42, 0.9);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6);
+}
+/* ===== VISUAL BACKGROUND DEPTH ===== */
+.body {
+  background: radial-gradient(
+      circle at top right,
+      rgba(102, 187, 106, 0.12),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(33, 150, 243, 0.08),
+      transparent 45%
+    );
+}
+.content-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px;
+  border-radius: 28px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0.75)
+  );
+
+  backdrop-filter: blur(16px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
+
+  animation: fadeInUp 0.6s ease;
 }
 
-body.dark .header h1 {
-  color: #a5d6a7;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+body {
+  background: radial-gradient(
+      circle at top left,
+      #e8f5e9 0%,
+      #f1f8e9 35%,
+      #ffffff 70%
+  );
 }
 
-body.dark .header p {
-  color: #bdbdbd;
+body.dark .sidebar {
+  background: linear-gradient(180deg, #020617, #020617);
 }
 
-body.dark .upload-btn {
-  background: linear-gradient(135deg, #2e7d32, #388e3c);
+body.dark .sidebar button {
+  color: #9ca3af;
 }
 
-body.dark .upload-btn.secondary {
-  background: linear-gradient(135deg, #455a64, #607d8b);
+body.dark .sidebar .active {
+  background: linear-gradient(90deg, #16a34a, #4ade80);
+}
+.content-wrapper {
+  max-width: 820px;
+  margin: 32px auto;
+  padding: 28px;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(14px);
+  border-radius: 24px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.12);
 }
 
-body.dark .predict-btn {
-  background: linear-gradient(135deg, #0d47a1, #1976d2);
+/* ===============================
+   BUTTON SIZE & RESPONSIVENESS FIX
+   (ADD AT VERY BOTTOM)
+================================ */
+
+/* Base button sizing (all devices) */
+.upload-btn,
+.capture-btn,
+.predict-btn {
+  width: 100%;
+  max-width: 520px;          /* same size for all */
+  padding: 16px 20px;
+  border-radius: 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 auto;
 }
 
-body.dark .confidence-bar {
-  background: #424242;
+.upload-btn.primary {
+  background: linear-gradient(135deg, #2e7d32, #66bb6a);
 }
 
-body.dark .history li {
-  border-bottom: 1px solid #333;
+.upload-btn.secondary {
+  background: linear-gradient(135deg, #546e7a, #90a4ae);
+}
+
+.predict-btn {
+  background: linear-gradient(135deg, #1565c0, #42a5f5);
+}
+
+/* 📱 Mobile (compact & comfortable) */
+@media (max-width: 480px) {
+  .upload-btn,
+  .capture-btn,
+  .predict-btn {
+    max-width: 100%;
+    font-size: 0.95rem;
+    padding: 14px 16px;
+  }
+}
+
+
+/* 💻 Desktop (more breathing space) */
+@media (min-width: 900px) {
+  .upload-btn,
+  .capture-btn,
+  .predict-btn {
+    font-size: 1.05rem;
+    padding: 18px 22px;
+  }
+}
+
+
+/* Fix Upload Image button looking smaller */
+.upload-btn.secondary {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* ✨ Hover lift (desktop only) */
+@media (hover: hover) {
+  .upload-btn:hover,
+  .capture-btn:hover,
+  .predict-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+  }
+}
+/* ===============================
+   GLOBAL BACKGROUND FIX
+================================ */
+body {
+  background: radial-gradient(
+    circle at top left,
+    #e8f5e9 0%,
+    #f1f8e9 35%,
+    #ffffff 75%
+  );
+}
+/* ===============================
+   BUTTON STACK (VERTICAL)
+================================ */
+.button-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;               /* ✅ SAME SPACE BETWEEN ALL BUTTONS */
+  align-items: center;
+  margin-top: 18px;
+}
+
+/* ===============================
+   CENTER TEXT INSIDE UPLOAD LABEL
+================================ */
+.upload-btn,
+.upload-btn.secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* 👈 THIS FIXES IT */
+  text-align: center;
 }

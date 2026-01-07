@@ -1,13 +1,20 @@
-export default function Header({ darkMode, toggleDark }) {
+import "./Header.css";
+function Header({ darkMode, toggleDark, onLogout }) {
   return (
     <header className="header">
-      <div className="header-top">
-        <h1>🥔 Potato Disease Detection</h1>
-        <button className="theme-toggle" onClick={toggleDark}>
-          {darkMode ? "☀️" : "🌙"}
+      <h1>🌱 Potato Disease Detector</h1>
+
+      <div className="header-actions">
+        <button onClick={toggleDark}>
+          {darkMode ? "☀️ Light" : "🌙 Dark"}
+        </button>
+
+        <button onClick={onLogout} className="logout-btn">
+          🚪 Logout
         </button>
       </div>
-      <p>AI-powered leaf disease analysis</p>
     </header>
   );
 }
+
+export default Header;
