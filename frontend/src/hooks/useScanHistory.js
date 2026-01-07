@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
 
+const STORAGE_KEY = "scan_history";
+
 export function useScanHistory() {
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  });
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("scanHistory")) || [];
-    setHistory(saved);
-  }, []);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+  }, [history]);
 
   const addToHistory = (entry) => {
-    const updated = [entry, ...history].slice(0, 10);
-    setHistory(updated);
-    localStorage.setItem("scanHistory", JSON.stringify(updated));
+    setHistory((prev) => [entry, ...prev]);
   };
 
   const clearHistory = () => {
-    localStorage.removeItem("scanHistory");
     setHistory([]);
+    localStorage.removeItem(STORAGE_KEY);
   };
 
   return { history, addToHistory, clearHistory };

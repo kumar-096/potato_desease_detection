@@ -410,3 +410,112 @@ body {
   justify-content: center;   /* 👈 THIS FIXES IT */
   text-align: center;
 }
+.settings-section {
+  margin-top: 1rem;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.5rem 0;
+}
+
+.setting-disabled {
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  margin-top: 0.4rem;
+  opacity: 0.6;
+}
+
+.settings-note {
+  font-size: 0.85rem;
+  margin-top: 0.6rem;
+  opacity: 0.7;
+}
+
+.muted {
+  opacity: 0.85;
+}
+.offline-banner {
+  background: #ffefef;
+  color: #a10000;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+/* =====================
+   HISTORY STYLES
+===================== */
+
+.history {
+  padding: 1rem;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card-bg, #f9f9f9);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.6rem;
+}
+
+.history-item strong {
+  flex: 2;
+}
+
+.history-item span {
+  flex: 1;
+  text-align: center;
+  font-weight: 600;
+}
+
+.history-item small {
+  flex: 2;
+  text-align: right;
+  opacity: 0.7;
+}
+
+.clear-btn {
+  background: #ffeded;
+  border: 1px solid #ffb3b3;
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* =====================
+   ANALYTICS STYLES
+===================== */
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.analytics-card {
+  padding: 1rem;
+  background: var(--card-bg, #f5f7fa);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.analytics-card h4 {
+  margin-bottom: 0.5rem;
+}
+
+.analytics-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+}

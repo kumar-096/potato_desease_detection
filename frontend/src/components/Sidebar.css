@@ -16,6 +16,25 @@
   cursor: pointer;
   border-radius: 6px;
 }
+/* Badge */
+.sidebar-item .badge {
+  margin-left: auto;
+  background: linear-gradient(135deg, #ff9800, #ffb74d);
+  color: #1b1b1b;
+  font-size: 0.65rem;
+  padding: 3px 6px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+/* Better active animation */
+.sidebar-item {
+  transition: background 0.25s ease, transform 0.15s ease;
+}
+
+.sidebar-item:hover {
+  transform: translateX(4px);
+}
 
 .sidebar button:hover {
   background: #333;

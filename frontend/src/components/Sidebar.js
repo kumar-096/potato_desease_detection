@@ -1,52 +1,59 @@
 import { PAGES } from "../constants/pages";
 import "./Sidebar.css";
 
-function Sidebar({ activePage, setActivePage }) {
+export default function Sidebar({ activePage, setActivePage }) {
   return (
     <aside className="sidebar">
-      <button
-        className={activePage === PAGES.SCAN ? "active" : ""}
-        onClick={() => setActivePage(PAGES.SCAN)}
-      >
-        📷 Scan Crop
-      </button>
+      <div className="sidebar-section">
+        <SidebarItem
+          label="Scan Crop"
+          icon="📷"
+          active={activePage === PAGES.SCAN}
+          onClick={() => setActivePage(PAGES.SCAN)}
+        />
 
-      <button
-        className={activePage === PAGES.HISTORY ? "active" : ""}
-        onClick={() => setActivePage(PAGES.HISTORY)}
-      >
-        📜 Scan History
-      </button>
+        <SidebarItem
+          label="Scan History"
+          icon="📜"
+          active={activePage === PAGES.HISTORY}
+          onClick={() => setActivePage(PAGES.HISTORY)}
+        />
 
-      <button
-        className={activePage === PAGES.WEATHER ? "active" : ""}
-        onClick={() => setActivePage(PAGES.WEATHER)}
-      >
-        🌦️ Weather Risk
-      </button>
+        <SidebarItem
+          label="Analytics"
+          icon="📊"
+          active={activePage === PAGES.ANALYTICS}
+          onClick={() => setActivePage(PAGES.ANALYTICS)}
+        />
+      </div>
 
-      <button
-        className={activePage === PAGES.ANALYTICS ? "active" : ""}
-        onClick={() => setActivePage(PAGES.ANALYTICS)}
-      >
-        📊 Analytics
-      </button>
+      <div className="sidebar-section bottom">
+        <SidebarItem
+          label="Settings"
+          icon="⚙️"
+          active={activePage === PAGES.SETTINGS}
+          onClick={() => setActivePage(PAGES.SETTINGS)}
+        />
 
-      <button
-        className={activePage === PAGES.SETTINGS ? "active" : ""}
-        onClick={() => setActivePage(PAGES.SETTINGS)}
-      >
-        ⚙️ Settings
-      </button>
-
-      <button
-        className={activePage === PAGES.HELP ? "active" : ""}
-        onClick={() => setActivePage(PAGES.HELP)}
-      >
-        ❓ Help
-      </button>
+        <SidebarItem
+          label="Help & FAQ"
+          icon="❓"
+          active={activePage === PAGES.HELP}
+          onClick={() => setActivePage(PAGES.HELP)}
+        />
+      </div>
     </aside>
   );
 }
 
-export default Sidebar;
+function SidebarItem({ icon, label, active, onClick }) {
+  return (
+    <button
+      className={`sidebar-item ${active ? "active" : ""}`}
+      onClick={onClick}
+    >
+      <span className="icon">{icon}</span>
+      <span className="label">{label}</span>
+    </button>
+  );
+}
