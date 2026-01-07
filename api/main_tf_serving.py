@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 from io import BytesIO
@@ -32,7 +32,6 @@ def preprocess_image(data):
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     image = preprocess_image(await file.read())
-
     payload = {"instances": [image]}
 
     try:
@@ -41,11 +40,17 @@ async def predict(file: UploadFile = File(...)):
             json=payload,
             timeout=5
         )
-    except requests.exceptions.RequestException as e:
-        return {"error": f"TF Serving unavailable: {str(e)}"}
+    except requests.exceptions.RequestException:
+        raise HTTPException(
+            status_code=503,
+            detail="TF Serving unavailable"
+        )
 
     if response.status_code != 200:
-        return {"error": response.text}
+        raise HTTPException(
+            status_code=503,
+            detail="Model prediction failed"
+        )
 
     predictions = response.json()["predictions"][0]
     index = int(np.argmax(predictions))

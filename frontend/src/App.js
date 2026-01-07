@@ -36,7 +36,7 @@ function App() {
      IMAGE UPLOAD
   =============================== */
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     const imageURL = URL.createObjectURL(file);
@@ -67,8 +67,9 @@ function App() {
   =============================== */
   const capturePhoto = () => {
     const video = videoRef.current;
-    const canvas = document.createElement("canvas");
+    if (!video) return;
 
+    const canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
 
@@ -76,6 +77,8 @@ function App() {
     ctx.drawImage(video, 0, 0);
 
     canvas.toBlob((blob) => {
+      if (!blob) return;
+
       const file = new File([blob], "captured.jpg", {
         type: "image/jpeg",
       });
@@ -99,41 +102,47 @@ function App() {
   };
 
   /* ===============================
-     WEATHER RISK
+     WEATHER RISK (SAFE)
   =============================== */
   useEffect(() => {
     if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
-        const { latitude, longitude } = pos.coords;
-        const weatherData = await fetchWeatherRisk(latitude, longitude);
-        setWeather(weatherData);
+        try {
+          const { latitude, longitude } = pos.coords;
+          const weatherData = await fetchWeatherRisk(latitude, longitude);
+          setWeather(weatherData || null);
+        } catch {
+          setWeather(null);
+        }
       },
       () => {
-        console.log("Location access denied");
+        setWeather(null);
       }
     );
   }, []);
 
   /* ===============================
-     PREDICT (TF-SERVING ONLY)
+     PREDICT (ROBUST & SAFE)
   =============================== */
   const handlePredict = async () => {
     if (!image || !preview) return;
 
     const quality = await checkImageQuality(preview);
-    if (!quality.ok) {
-      alert(quality.message);
+    if (!quality?.ok) {
+      alert(quality?.message || "Poor image quality");
       return;
     }
 
     setLoading(true);
+    setResult(null);
 
     try {
-      // Auto-crop leaf
+      // Auto-crop
       const croppedImageURL = await autoCropLeaf(preview);
       const blob = await fetch(croppedImageURL).then((res) => res.blob());
+
       const croppedFile = new File([blob], "leaf.jpg", {
         type: "image/jpeg",
       });
@@ -141,18 +150,24 @@ function App() {
       const formData = new FormData();
       formData.append("file", croppedFile);
 
-      // Prediction API
       const response = await fetch("http://localhost:8001/predict", {
         method: "POST",
         body: formData,
       });
 
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error("Prediction API failed: " + text);
-      }
-
       const data = await response.json();
+
+      console.log("Prediction response:", data);
+
+      // STRICT VALIDATION
+      if (
+        !response.ok ||
+        !data ||
+        typeof data.confidence !== "number" ||
+        !data.prediction
+      ) {
+        throw new Error("Invalid prediction response");
+      }
 
       setResult(data);
 
@@ -163,7 +178,7 @@ function App() {
       });
     } catch (err) {
       console.error("❌ ERROR:", err.message);
-      alert("Prediction failed. Check console for details.");
+      alert("Prediction failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -173,7 +188,7 @@ function App() {
      UI
   =============================== */
   return (
-    <div className="app">
+    <div className={`app ${darkMode ? "dark" : ""}`}>
       <Header
         darkMode={darkMode}
         toggleDark={() => setDarkMode(!darkMode)}

@@ -1,0 +1,33 @@
+.result-card {
+  margin: 20px auto;
+  padding: 16px;
+  max-width: 400px;
+  border-radius: 10px;
+  background: #f9f9f9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.result-card h2 {
+  margin-bottom: 10px;
+}
+
+.result-card p {
+  font-size: 16px;
+  margin: 6px 0;
+}
+
+/* Optional color coding */
+.result-card.early blight,
+.result-card.early {
+  border-left: 6px solid orange;
+}
+
+.result-card.late blight,
+.result-card.late {
+  border-left: 6px solid red;
+}
+
+.result-card.healthy {
+  border-left: 6px solid green;
+}
