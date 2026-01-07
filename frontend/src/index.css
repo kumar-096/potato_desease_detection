@@ -1,0 +1,115 @@
+/* ===============================
+   GLOBAL RESET & BASE STYLES
+================================ */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Prevent horizontal scrolling on mobile */
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Smooth mobile scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ===============================
+   BODY
+================================ */
+
+body {
+  min-height: 100vh;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto",
+    "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(180deg, #e8f5e9 0%, #ffffff 60%);
+  color: #212121;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===============================
+   IMAGE HANDLING
+================================ */
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+}
+
+/* ===============================
+   BUTTON RESET
+================================ */
+
+button {
+  font-family: inherit;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+/* Remove mobile tap highlight */
+button,
+label {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===============================
+   FORM ELEMENTS
+================================ */
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+}
+
+/* ===============================
+   ACCESSIBILITY
+================================ */
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid rgba(21, 101, 192, 0.4);
+  outline-offset: 2px;
+}
+
+/* ===============================
+   UTILITY CLASSES (optional future use)
+================================ */
+
+.text-center {
+  text-align: center;
+}
+
+.mt-1 {
+  margin-top: 8px;
+}
+.mt-2 {
+  margin-top: 16px;
+}
+.mt-3 {
+  margin-top: 24px;
+}
+
+/* ===============================
+   SAFE AREA (for mobile notch)
+================================ */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

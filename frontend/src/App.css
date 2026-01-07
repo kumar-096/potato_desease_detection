@@ -1,0 +1,368 @@
+/* ===============================
+   GLOBAL RESET
+================================ */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(180deg, #e8f5e9, #ffffff);
+}
+
+/* ===============================
+   MAIN CONTAINER
+================================ */
+.app {
+  max-width: 420px;
+  margin: auto;
+  padding: 16px;
+}
+
+/* ===============================
+   HEADER
+================================ */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #1b5e20;
+}
+
+.header p {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: #4f4f4f;
+}
+
+/* ===============================
+   CARD
+================================ */
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* ===============================
+   PRIMARY BUTTONS
+================================ */
+.upload-btn {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  background: linear-gradient(135deg, #1b5e20, #43a047);
+  color: #ffffff;
+
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  box-shadow: 0 8px 18px rgba(46, 125, 50, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.upload-btn:active {
+  transform: scale(0.96);
+}
+
+/* Hover only for laptops */
+@media (hover: hover) {
+  .upload-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(46, 125, 50, 0.45);
+  }
+}
+
+/* Secondary button */
+.upload-btn.secondary {
+  background: linear-gradient(135deg, #546e7a, #90a4ae);
+  box-shadow: 0 8px 18px rgba(84, 110, 122, 0.35);
+}
+
+/* ===============================
+   CAMERA
+================================ */
+.camera-box {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.camera-box video {
+  width: 100%;
+  border-radius: 14px;
+}
+
+.capture-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+
+  background: linear-gradient(135deg, #c62828, #ef5350);
+  color: white;
+
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  box-shadow: 0 8px 18px rgba(198, 40, 40, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.capture-btn:active {
+  transform: scale(0.96);
+}
+
+/* ===============================
+   IMAGE PREVIEW
+================================ */
+.preview {
+  margin: 16px 0;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.preview img {
+  width: 100%;
+  display: block;
+}
+
+/* ===============================
+   PREDICT BUTTON
+================================ */
+.predict-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #1565c0, #42a5f5);
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.predict-btn:disabled {
+  background: #bdbdbd;
+  cursor: not-allowed;
+}
+
+/* ===============================
+   RESULT
+================================ */
+.result {
+  text-align: center;
+}
+
+.healthy {
+  border-left: 6px solid #2e7d32;
+}
+
+.diseased {
+  border-left: 6px solid #c62828;
+}
+
+/* ===============================
+   CONFIDENCE BAR
+================================ */
+.confidence-box {
+  margin-top: 14px;
+}
+
+.confidence-text {
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+.confidence-bar {
+  width: 100%;
+  height: 10px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  transition: width 0.6s ease;
+}
+
+.confidence-fill.high {
+  background: linear-gradient(90deg, #2e7d32, #66bb6a);
+}
+
+.confidence-fill.medium {
+  background: linear-gradient(90deg, #f9a825, #fdd835);
+}
+
+.confidence-fill.low {
+  background: linear-gradient(90deg, #c62828, #ef5350);
+}
+
+/* ===============================
+   SUGGESTIONS
+================================ */
+.suggestions {
+  margin-top: 18px;
+  text-align: left;
+}
+
+.suggestions h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #2e7d32;
+}
+
+.suggestions ul {
+  padding-left: 18px;
+}
+
+.suggestions li {
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* ===============================
+   HISTORY
+================================ */
+.history ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history li {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.history-header button {
+  background: none;
+  border: none;
+  color: #c62828;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (min-width: 480px) {
+  .app {
+    max-width: 560px;
+    padding: 20px;
+  }
+
+  .header h1 {
+    font-size: 1.7rem;
+  }
+
+  .card {
+    padding: 18px;
+  }
+}
+
+@media (min-width: 900px) {
+  body {
+    background: linear-gradient(120deg, #eef5ee, #f8fbf8);
+  }
+
+  .app {
+    max-width: 640px;
+    padding: 24px;
+  }
+
+  .header h1 {
+    font-size: 1.9rem;
+  }
+
+  .header p {
+    font-size: 0.95rem;
+  }
+
+  .card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+}
+/* ===============================
+   HEADER TOP
+================================ */
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+/* ===============================
+   DARK MODE
+================================ */
+body.dark {
+  background: linear-gradient(180deg, #121212, #1e1e1e);
+  color: #e0e0e0;
+}
+
+body.dark .card {
+  background: #1f1f1f;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+body.dark .header h1 {
+  color: #a5d6a7;
+}
+
+body.dark .header p {
+  color: #bdbdbd;
+}
+
+body.dark .upload-btn {
+  background: linear-gradient(135deg, #2e7d32, #388e3c);
+}
+
+body.dark .upload-btn.secondary {
+  background: linear-gradient(135deg, #455a64, #607d8b);
+}
+
+body.dark .predict-btn {
+  background: linear-gradient(135deg, #0d47a1, #1976d2);
+}
+
+body.dark .confidence-bar {
+  background: #424242;
+}
+
+body.dark .history li {
+  border-bottom: 1px solid #333;
+}

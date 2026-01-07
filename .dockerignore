@@ -1,0 +1,8 @@
+training
+saved_models
+.ipynb_checkpoints
+__pycache__
+*.ipynb
+.venv
+venv
+.idea

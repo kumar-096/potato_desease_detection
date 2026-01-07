@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  tf_serving:
+    image: tensorflow/serving:2.13.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./models/potato_model:/models/potato_model
+    environment:
+      - MODEL_NAME=potato_model
+
+  api:
+    build: ./api
+    ports:
+      - "8001:8001"
+    depends_on:
+      - tf_serving
