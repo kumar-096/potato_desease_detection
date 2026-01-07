@@ -4,8 +4,12 @@ from PIL import Image
 from io import BytesIO
 import numpy as np
 import requests
+from auth import router as auth_router
+
 
 app = FastAPI()
+from auth_routes import router as auth_router
+app.include_router(auth_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -14,7 +18,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+app.include_router(auth_router)
 TF_SERVING_URL = "http://tf_serving:8501/v1/models/potato_model:predict"
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 

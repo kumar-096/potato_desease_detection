@@ -6,6 +6,7 @@ import ImageCapture from "./components/ImageCapture";
 import ResultCard from "./components/ResultCard";
 import HistoryCard from "./components/HistoryCard";
 import WeatherRiskCard from "./components/WeatherRiskCard";
+import AuthPage from "./components/auth/AuthPage";
 
 import { fetchWeatherRisk } from "./utils/weatherRisk";
 import { checkImageQuality } from "./utils/imageQuality";
@@ -16,10 +17,15 @@ import { useScanHistory } from "./hooks/useScanHistory";
 
 function App() {
   /* ===============================
-     STATE
+     AUTH STATE
+  =============================== */
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  /* ===============================
+     APP STATE
   =============================== */
   const [weather, setWeather] = useState(null);
-
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
@@ -33,76 +39,33 @@ function App() {
   const { history, addToHistory, clearHistory } = useScanHistory();
 
   /* ===============================
-     IMAGE UPLOAD
+     VERIFY TOKEN ON LOAD
   =============================== */
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const imageURL = URL.createObjectURL(file);
-    setImage(file);
-    setPreview(imageURL);
-    setResult(null);
-  };
-
-  /* ===============================
-     OPEN CAMERA
-  =============================== */
-  const openCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-
-      streamRef.current = stream;
-      videoRef.current.srcObject = stream;
-      setCameraOpen(true);
-    } catch {
-      alert("Camera access denied or not available.");
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setAuthChecked(true);
+      return;
     }
-  };
+
+    fetch("http://localhost:8001/verify-token", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        setIsAuthenticated(true);
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+        setIsAuthenticated(false);
+      })
+      .finally(() => setAuthChecked(true));
+  }, []);
 
   /* ===============================
-     CAPTURE PHOTO
-  =============================== */
-  const capturePhoto = () => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(video, 0, 0);
-
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-
-      const file = new File([blob], "captured.jpg", {
-        type: "image/jpeg",
-      });
-
-      const imageURL = URL.createObjectURL(file);
-      setImage(file);
-      setPreview(imageURL);
-      setCameraOpen(false);
-      stopCamera();
-    });
-  };
-
-  /* ===============================
-     STOP CAMERA
-  =============================== */
-  const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((t) => t.stop());
-      streamRef.current = null;
-    }
-  };
-
-  /* ===============================
-     WEATHER RISK (SAFE)
+     WEATHER
   =============================== */
   useEffect(() => {
     if (!navigator.geolocation) return;
@@ -111,64 +74,72 @@ function App() {
       async (pos) => {
         try {
           const { latitude, longitude } = pos.coords;
-          const weatherData = await fetchWeatherRisk(latitude, longitude);
-          setWeather(weatherData || null);
+          const data = await fetchWeatherRisk(latitude, longitude);
+          setWeather(data || null);
         } catch {
           setWeather(null);
         }
-      },
-      () => {
-        setWeather(null);
       }
     );
   }, []);
 
   /* ===============================
-     PREDICT (ROBUST & SAFE)
+     IMAGE
+  =============================== */
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setImage(file);
+    setPreview(url);
+    setResult(null);
+  };
+
+  const openCamera = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" },
+    });
+    streamRef.current = stream;
+    videoRef.current.srcObject = stream;
+    setCameraOpen(true);
+  };
+
+  const capturePhoto = () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    canvas.getContext("2d").drawImage(videoRef.current, 0, 0);
+
+    canvas.toBlob((blob) => {
+      const file = new File([blob], "leaf.jpg", { type: "image/jpeg" });
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+      setCameraOpen(false);
+      streamRef.current.getTracks().forEach((t) => t.stop());
+    });
+  };
+
+  /* ===============================
+     PREDICT
   =============================== */
   const handlePredict = async () => {
-    if (!image || !preview) return;
-
     const quality = await checkImageQuality(preview);
-    if (!quality?.ok) {
-      alert(quality?.message || "Poor image quality");
-      return;
-    }
+    if (!quality?.ok) return alert(quality.message);
 
     setLoading(true);
-    setResult(null);
-
     try {
-      // Auto-crop
-      const croppedImageURL = await autoCropLeaf(preview);
-      const blob = await fetch(croppedImageURL).then((res) => res.blob());
+      const cropped = await autoCropLeaf(preview);
+      const blob = await fetch(cropped).then((r) => r.blob());
 
-      const croppedFile = new File([blob], "leaf.jpg", {
-        type: "image/jpeg",
-      });
+      const fd = new FormData();
+      fd.append("file", new File([blob], "leaf.jpg"));
 
-      const formData = new FormData();
-      formData.append("file", croppedFile);
-
-      const response = await fetch("http://localhost:8001/predict", {
+      const res = await fetch("http://localhost:8001/predict", {
         method: "POST",
-        body: formData,
+        body: fd,
       });
 
-      const data = await response.json();
-
-      console.log("Prediction response:", data);
-
-      // STRICT VALIDATION
-      if (
-        !response.ok ||
-        !data ||
-        typeof data.confidence !== "number" ||
-        !data.prediction
-      ) {
-        throw new Error("Invalid prediction response");
-      }
-
+      const data = await res.json();
       setResult(data);
 
       addToHistory({
@@ -176,23 +147,26 @@ function App() {
         confidence: data.confidence,
         date: new Date().toLocaleString(),
       });
-    } catch (err) {
-      console.error("❌ ERROR:", err.message);
-      alert("Prediction failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   /* ===============================
+     AUTH GUARD
+  =============================== */
+  if (!authChecked) return <div>Checking authentication...</div>;
+  if (!isAuthenticated) {
+  return <AuthPage onLogin={() => setIsAuthenticated(true)} />;
+}
+
+
+  /* ===============================
      UI
   =============================== */
   return (
     <div className={`app ${darkMode ? "dark" : ""}`}>
-      <Header
-        darkMode={darkMode}
-        toggleDark={() => setDarkMode(!darkMode)}
-      />
+      <Header darkMode={darkMode} toggleDark={() => setDarkMode(!darkMode)} />
 
       <ImageCapture
         cameraOpen={cameraOpen}

@@ -4,3 +4,7 @@ python-multipart
 requests
 numpy
 pillow
+python-jose
+passlib
+bcrypt==3.2.2
+sqlalchemy
