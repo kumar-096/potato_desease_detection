@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
+/* ===============================
+   COMPONENTS
+================================ */
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import ImageCapture from "./components/ImageCapture";
@@ -11,8 +14,10 @@ import AuthPage from "./components/auth/AuthPage";
 import Analytics from "./components/Analytics";
 import Settings from "./components/Settings";
 import Help from "./components/Help";
-import Profile from "./components/Profile";
 
+/* ===============================
+   UTILS & HOOKS
+================================ */
 import { fetchWeatherRisk } from "./utils/weatherRisk";
 import { checkImageQuality } from "./utils/imageQuality";
 import { autoCropLeaf } from "./utils/autoCropLeaf";
@@ -20,15 +25,35 @@ import { autoCropLeaf } from "./utils/autoCropLeaf";
 import { useDarkMode } from "./hooks/useDarkMode";
 import { useScanHistory } from "./hooks/useScanHistory";
 import { useSettings } from "./hooks/useSettings";
+import { useSessionTracker } from "./hooks/useSessionTracker";
+import { useNotifications } from "./hooks/useNotifications";
+
 import { PAGES } from "./constants/pages";
 
+/* ===============================
+   ADMIN DASHBOARD
+================================ */
+function AdminDashboard() {
+  return (
+    <div className="card">
+      <h3>🧑‍💼 Admin Dashboard</h3>
+      <ul>
+        <li>📊 System usage overview</li>
+        <li>👥 User management (coming soon)</li>
+        <li>🔐 Role-based access active</li>
+        <li>🧪 Diagnostics tools</li>
+      </ul>
+    </div>
+  );
+}
+
 function App() {
+  /* ===============================
+     CORE STATE
+  =============================== */
   const [activePage, setActivePage] = useState(PAGES.SCAN);
   const [authChecked, setAuthChecked] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  const [diseaseFilter, setDiseaseFilter] = useState("");
-  const [minConfidence, setMinConfidence] = useState(0);
 
   const [weather, setWeather] = useState(null);
   const [image, setImage] = useState(null);
@@ -39,35 +64,54 @@ function App() {
 
   const [online, setOnline] = useState(navigator.onLine);
   const [user, setUser] = useState(null);
-  const [avatar, setAvatar] = useState(
-    localStorage.getItem("avatar") || null
-  );
-  const [notifications, setNotifications] = useState(3); // demo count
+
+  /* ===============================
+     PWA INSTALL
+  =============================== */
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstall, setShowInstall] = useState(false);
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
 
+  /* ===============================
+     HOOKS
+  =============================== */
   const [darkMode, setDarkMode] = useDarkMode();
-  const { history, addToHistory, clearHistory } = useScanHistory();
   const { settings, setSettings } = useSettings();
+  const { history, addToHistory } = useScanHistory(user);
 
-  /* FETCH USER */
+  const {
+    notifications,
+    unreadCount,
+    addNotification,
+    markAllRead,
+  } = useNotifications(user);
+
+  useSessionTracker(user);
+
+  /* ===============================
+     FETCH USER
+  =============================== */
   useEffect(() => {
     fetch("http://localhost:8001/me", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         const u = data.user || data;
         setUser({
           ...u,
-          email: u.email || u.email_id || u.username || "unknown@mail.com",
-          role: u.role || u.user_type || "user",
+          email: u.email || u.username || "unknown@mail.com",
+          role: u.role || "user",
         });
-      });
+      })
+      .catch(() => setUser(null));
   }, []);
 
-  /* AUTH CHECK */
+  /* ===============================
+     AUTH CHECK
+  =============================== */
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return setAuthChecked(true);
@@ -75,7 +119,7 @@ function App() {
     fetch("http://localhost:8001/verify-token", {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error();
         setIsAuthenticated(true);
       })
@@ -87,11 +131,13 @@ function App() {
   }, []);
 
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.clear();
     setIsAuthenticated(false);
   };
 
-  /* ONLINE / OFFLINE */
+  /* ===============================
+     ONLINE / OFFLINE
+  =============================== */
   useEffect(() => {
     const update = () => setOnline(navigator.onLine);
     window.addEventListener("online", update);
@@ -102,9 +148,39 @@ function App() {
     };
   }, []);
 
-  /* WEATHER */
   useEffect(() => {
-    navigator.geolocation?.getCurrentPosition(async pos => {
+    if (online && user) {
+      addNotification("Internet connection restored", "info");
+    }
+  }, [online, user]);
+
+  /* ===============================
+     PWA INSTALL BANNER
+  =============================== */
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstall(true);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () =>
+      window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const installPWA = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    setDeferredPrompt(null);
+    setShowInstall(false);
+  };
+
+  /* ===============================
+     WEATHER
+  =============================== */
+  useEffect(() => {
+    navigator.geolocation?.getCurrentPosition(async (pos) => {
       const data = await fetchWeatherRisk(
         pos.coords.latitude,
         pos.coords.longitude
@@ -113,8 +189,10 @@ function App() {
     });
   }, []);
 
-  /* IMAGE */
-  const handleImageChange = e => {
+  /* ===============================
+     IMAGE HANDLING
+  =============================== */
+  const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setImage(file);
@@ -138,16 +216,19 @@ function App() {
     canvas.width = videoRef.current.videoWidth;
     canvas.height = videoRef.current.videoHeight;
     canvas.getContext("2d").drawImage(videoRef.current, 0, 0);
-    canvas.toBlob(blob => {
+    canvas.toBlob((blob) => {
       setPreview(URL.createObjectURL(blob));
       setCameraOpen(false);
-      streamRef.current?.getTracks().forEach(t => t.stop());
+      streamRef.current?.getTracks().forEach((t) => t.stop());
     });
   };
 
-  /* PREDICT */
+  /* ===============================
+     PREDICT + NOTIFICATIONS
+  =============================== */
   const handlePredict = async () => {
     if (!preview || !online) return;
+
     const quality = await checkImageQuality(preview);
     if (!quality?.ok) return alert(quality.message);
 
@@ -157,7 +238,7 @@ function App() {
         ? await autoCropLeaf(preview)
         : preview;
 
-      const blob = await fetch(cropped).then(r => r.blob());
+      const blob = await fetch(cropped).then((r) => r.blob());
       const fd = new FormData();
       fd.append("file", new File([blob], "leaf.jpg"));
 
@@ -171,20 +252,38 @@ function App() {
 
       const data = await res.json();
       setResult(data);
+
       addToHistory({
         prediction: data.prediction,
         confidence: Number((data.confidence * 100).toFixed(2)),
         date: new Date().toLocaleString(),
       });
+
+      addNotification(`Scan completed: ${data.prediction}`, "success");
+
+      if (data.confidence > 0.85) {
+        addNotification(
+          `High confidence detected (${Math.round(
+            data.confidence * 100
+          )}%)`,
+          "warning"
+        );
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  /* ===============================
+     AUTH GUARD
+  =============================== */
   if (!authChecked) return <div>Checking authentication...</div>;
   if (!isAuthenticated)
     return <AuthPage onLogin={() => setIsAuthenticated(true)} />;
 
+  /* ===============================
+     UI
+  =============================== */
   return (
     <div className={`app-layout ${darkMode ? "dark" : ""}`}>
       <Header
@@ -194,14 +293,24 @@ function App() {
         user={user}
         history={history}
         settings={settings}
-        avatar={avatar}
-        setAvatar={setAvatar}
-        notifications={3}
-        clearNotifications={() => setNotifications(0)}
+        notifications={notifications}
+        unreadCount={unreadCount}
+        markAllRead={markAllRead}
       />
 
+      {showInstall && (
+        <div className="install-banner">
+          📱 Install Crop Health AI
+          <button onClick={installPWA}>Install</button>
+        </div>
+      )}
+
       <div className="body">
-        <Sidebar activePage={activePage} setActivePage={setActivePage} />
+        <Sidebar
+          activePage={activePage}
+          setActivePage={setActivePage}
+          user={user}
+        />
 
         {!online && (
           <div className="offline-banner">
@@ -225,7 +334,9 @@ function App() {
                 disabled={!online}
               />
               <ResultCard result={result} />
-              {result && weather && <WeatherRiskCard weather={weather} />}
+              {result && weather && (
+                <WeatherRiskCard weather={weather} />
+              )}
             </>
           )}
 
@@ -238,10 +349,18 @@ function App() {
             </div>
           )}
 
-          {activePage === PAGES.ANALYTICS && <Analytics history={history} />}
+          {activePage === PAGES.ANALYTICS && (
+            <Analytics history={history} />
+          )}
+
+          {activePage === PAGES.ADMIN && user?.role === "admin" && (
+            <AdminDashboard />
+          )}
+
           {activePage === PAGES.SETTINGS && (
             <Settings settings={settings} setSettings={setSettings} />
           )}
+
           {activePage === PAGES.HELP && <Help />}
         </main>
       </div>

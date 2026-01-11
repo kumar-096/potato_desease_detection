@@ -1,37 +1,38 @@
 export function getUserStats(history = []) {
-  if (!Array.isArray(history) || history.length === 0) {
+  if (!history.length) {
     return {
       totalScans: 0,
       lastScan: "N/A",
       mostCommon: "N/A",
       avgConfidence: "N/A",
+      trend: [],
     };
   }
 
   const totalScans = history.length;
-  const lastScan = history[0]?.date || "N/A";
+  const lastScan = history[0].date;
 
   const diseaseCount = {};
   history.forEach((h) => {
-    if (!h?.prediction) return;
     diseaseCount[h.prediction] =
       (diseaseCount[h.prediction] || 0) + 1;
   });
 
-  const mostCommon =
-    Object.entries(diseaseCount).sort((a, b) => b[1] - a[1])[0]?.[0] ||
-    "N/A";
+  const mostCommon = Object.entries(diseaseCount)
+    .sort((a, b) => b[1] - a[1])[0][0];
 
   const avgConfidence =
     (
-      history.reduce((sum, h) => sum + (h.confidence || 0), 0) /
-      totalScans
+      history.reduce((s, h) => s + h.confidence, 0) / totalScans
     ).toFixed(1) + "%";
 
-  return {
-    totalScans,
-    lastScan,
-    mostCommon,
-    avgConfidence,
-  };
+  const trend = history
+    .slice()
+    .reverse()
+    .map((h, i) => ({
+      x: i + 1,
+      y: h.confidence,
+    }));
+
+  return { totalScans, lastScan, mostCommon, avgConfidence, trend };
 }

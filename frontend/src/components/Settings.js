@@ -1,75 +1,57 @@
-export default function Settings({ settings, setSettings }) {
+
+
+export default function Settings({
+  settings,
+  setSettings,
+  addNotification,
+  canInstall,
+  installApp,
+}) {
   return (
-    <div className="card settings">
+    <div className="card">
       <h3>⚙️ Settings</h3>
 
-      {/* ===============================
-          ACTIVE SETTINGS
-      =============================== */}
-      <section className="settings-section">
-        <h4>Preferences</h4>
+      <label>
+        <input
+          type="checkbox"
+          checked={settings.autoCrop}
+          onChange={e =>
+            setSettings({ ...settings, autoCrop: e.target.checked })
+          }
+        />
+        Auto Crop
+      </label>
 
-        <label className="setting-item">
-          <input
-            type="checkbox"
-            checked={settings.enableNotifications}
-            onChange={(e) =>
-              setSettings({
-                ...settings,
-                enableNotifications: e.target.checked,
-              })
-            }
-          />
-          <span>Enable Notifications</span>
-        </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={settings.enableNotifications}
+          onChange={e =>
+            setSettings({
+              ...settings,
+              enableNotifications: e.target.checked,
+            })
+          }
+        />
+        Enable Notifications
+      </label>
 
-        <label className="setting-item">
-          <input
-            type="checkbox"
-            checked={settings.highQualityCamera}
-            onChange={(e) =>
-              setSettings({
-                ...settings,
-                highQualityCamera: e.target.checked,
-              })
-            }
-          />
-          <span>High Quality Camera</span>
-        </label>
+      {canInstall && (
+        <button onClick={installApp}>📱 Install App</button>
+      )}
 
-        <label className="setting-item">
-          <input
-            type="checkbox"
-            checked={settings.autoCrop}
-            onChange={(e) =>
-              setSettings({
-                ...settings,
-                autoCrop: e.target.checked,
-              })
-            }
-          />
-          <span>Auto Crop Leaf</span>
-        </label>
-      </section>
+      
+      <hr />
 
-      {/* ===============================
-          COMING SOON SETTINGS
-      =============================== */}
-      <section className="settings-section muted">
-        <h4>More Settings (Coming Soon)</h4>
-
-        <div className="setting-disabled">
-          🌐 Language Preferences
-        </div>
-
-        <div className="setting-disabled">
-          🔒 Privacy Controls
-        </div>
-
-        <p className="settings-note">
-          These options will be available in future updates.
-        </p>
-      </section>
+      <h4>More Settings (Coming Soon)</h4>
+      <ul>
+        <li>🌐 Language Preferences</li>
+        <li>🔒 Privacy Controls</li>
+        <li>🔔 Firebase Push Notifications</li>
+        <li>📱 Mobile Notification UX</li>
+        <li>🧪 Notification Testing Utilities</li>
+      </ul>
     </div>
   );
 }
+

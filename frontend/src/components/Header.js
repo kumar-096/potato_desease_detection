@@ -29,12 +29,12 @@ export default function Header({
   history,
   settings,
   notifications,
-  clearNotifications,
+  unreadCount,
+  markAllRead,
 }) {
   const [open, setOpen] = useState(false);
   const stats = getUserStats(history);
 
-  /* USAGE TREND (confidence over time) */
   const trendData = {
     labels: history
       .slice()
@@ -45,7 +45,7 @@ export default function Header({
         label: "Confidence %",
         data: history.slice().reverse().map((h) => h.confidence),
         borderColor: "#4caf50",
-        backgroundColor: "rgba(76, 175, 80, 0.15)",
+        backgroundColor: "rgba(76,175,80,0.15)",
         tension: 0.35,
       },
     ],
@@ -60,16 +60,14 @@ export default function Header({
           {darkMode ? "🌞" : "🌙"}
         </button>
 
-        {/* PROFILE ICON */}
         <div className="profile-wrapper">
           <button
             className="profile-icon"
-            onClick={() => setOpen(!open)}
-            aria-label="Profile"
+            onClick={() => setOpen((p) => !p)}
           >
             👤
-            {notifications > 0 && (
-              <span className="notif-badge">{notifications}</span>
+            {unreadCount > 0 && (
+              <span className="notif-badge">{unreadCount}</span>
             )}
           </button>
 
@@ -80,30 +78,45 @@ export default function Header({
                 <div className="account-header">
                   <div className="avatar-static">👤</div>
                   <div>
-                    <div className="account-email">
-                      {user.email ?? "Loading…"}
-                    </div>
-                    <div className="account-role">
-                      {user.role ?? "Loading…"}
-                    </div>
+                    <div className="account-email">{user.email}</div>
+                    <div className="account-role">{user.role}</div>
                   </div>
                 </div>
               </section>
 
-              {/* USAGE SUMMARY */}
+              {/* NOTIFICATIONS */}
               <section className="profile-section">
-                <h4>📊 Usage Summary</h4>
+                <h4>🔔 Notifications</h4>
+                {notifications.length === 0 && (
+                  <p className="empty-text">No notifications</p>
+                )}
+                {notifications.slice(0, 5).map((n) => (
+                  <div
+                    key={n.id}
+                    className={`notif-item ${
+                      n.read ? "read" : "unread"
+                    }`}
+                  >
+                    <span>{n.message}</span>
+                    <small>{n.time}</small>
+                  </div>
+                ))}
+                {notifications.length > 0 && (
+                  <button
+                    className="clear-notif-btn"
+                    onClick={markAllRead}
+                  >
+                    Mark all read
+                  </button>
+                )}
+              </section>
+
+              {/* USAGE */}
+              <section className="profile-section">
+                <h4>📊 Usage</h4>
                 <div className="profile-row">
                   <span>Total scans</span>
                   <strong>{stats.totalScans}</strong>
-                </div>
-                <div className="profile-row">
-                  <span>Last scan</span>
-                  <strong>{stats.lastScan}</strong>
-                </div>
-                <div className="profile-row">
-                  <span>Top disease</span>
-                  <strong>{stats.mostCommon}</strong>
                 </div>
                 <div className="profile-row">
                   <span>Avg confidence</span>
@@ -111,50 +124,19 @@ export default function Header({
                 </div>
               </section>
 
-              {/* USAGE TREND */}
               {history.length > 1 && (
                 <section className="profile-section">
-                  <h4>📈 Usage Trend</h4>
+                  <h4>📈 Trend</h4>
                   <Line data={trendData} />
                 </section>
               )}
 
-              {/* PREFERENCES */}
-              <section className="profile-section">
-                <h4>⚙️ Preferences</h4>
-                <div className="profile-row">
-                  <span>Dark mode</span>
-                  <strong>{darkMode ? "On" : "Off"}</strong>
-                </div>
-                <div className="profile-row">
-                  <span>Auto crop</span>
-                  <strong>{settings.autoCrop ? "On" : "Off"}</strong>
-                </div>
-                <div className="profile-row">
-                  <span>Notifications</span>
-                  <strong>
-                    {settings.enableNotifications ? "On" : "Off"}
-                  </strong>
-                </div>
-              </section>
-
-              {/* ADMIN ONLY */}
               {user.role === "admin" && (
                 <section className="profile-section admin">
-                  <h4>🧑‍💼 Admin Tools</h4>
+                  <h4>🧑‍💼 Admin</h4>
                   <button className="admin-btn">Manage Users</button>
                   <button className="admin-btn">System Logs</button>
                 </section>
-              )}
-
-              {/* ACTIONS */}
-              {notifications > 0 && (
-                <button
-                  className="clear-notif-btn"
-                  onClick={clearNotifications}
-                >
-                  Clear Notifications
-                </button>
               )}
 
               <button className="logout-btn" onClick={onLogout}>
