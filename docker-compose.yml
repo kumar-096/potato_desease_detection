@@ -14,8 +14,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8001:8001"
+    volumes:
+      - ./models:/app/models   # 👈 THIS IS THE FIX
     depends_on:
       - tf_serving
+
 
   # frontend:
   #   build:
